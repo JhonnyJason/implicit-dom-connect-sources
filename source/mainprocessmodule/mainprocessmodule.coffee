@@ -1,11 +1,6 @@
 mainprocessmodule = {name: "mainprocessmodule"}
-
-#region modulesFromEnvironment
-cfg = null
-#endregion
-
+############################################################
 #region logPrintFunctions
-##############################################################################
 log = (arg) ->
     if allModules.debugmodule.modulesToDebug["mainprocessmodule"]?  then console.log "[mainprocessmodule]: " + arg
     return
@@ -13,19 +8,34 @@ olog = (o) -> log "\n" + ostr(o)
 ostr = (o) -> JSON.stringify(o, null, 4)
 print = (arg) -> console.log(arg)
 #endregion
-##############################################################################
+
+############################################################
+cfg = null
+pug = null
+path = null
+coffee = null
+
+############################################################
 mainprocessmodule.initialize = () ->
     log "mainprocessmodule.initialize"
     cfg = allModules.configmodule
+    pug = allModules.pughandlermodule
+    path = allModules.pathhandlermodule
+    coffee = allModules.coffeehandlermodule
     return 
 
-#region internalFunctions
-#endregion
+############################################################
+mainprocessmodule.execute = (e) ->
+    log "mainprocessmodule.execute"    
 
-#region exposedFunctions
-mainprocessmodule.execute = () ->
-    log "mainprocessmodule.execute"
+    await path.preparePugHeadPath(e.pugHead)
+    await path.prepareCoffeeCodePath(e.coffeeCode)
+    # await path.prepareOutputPath(e.output)
+
+    await pug.readFiles()
+    await coffee.scanForUsedIds()
+    # await coffee.writeOutputFile()
+
     return
-#endregion
 
 module.exports = mainprocessmodule

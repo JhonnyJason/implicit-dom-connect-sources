@@ -1,31 +1,43 @@
 {
-  "name": "temporaryFiles",
-  "version": "0.0.1",
-  "description": "",
+  "name": "implicit-dom-connect",
+  "version": "0.1.0",
+  "description": "A small helper toot - reading pug files to retrieve defined IDs then checks if they used in coffeescript. If they are used, the connection to the DOM is implicitly established - creating a file to be explicitly included in the build-process.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "Lenard Frommelt lenard.frommelt@gne.or.at",
+  "keywords": [
+    "implicit",
+    "dom",
+    "connect",
+    "implicit-dom-connect",
+    "coffeescript",
+    "pug",
+    "cli",
+    "getElementById",
+    "addEventListener"
+  ],
+  "author": "Lenard Frommelt",
   "license": "Unlicense",
   "bin": {
-    "temporaryFiles": "./index.js"
+    "implicit-dom-connect": "./index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://.git"
+    "url": "git+https://github.com/JhonnyJason/implicit-dom-connect.git"
   },
   "bugs": {
-    "url": "https://"
+    "url": "https://github.com/JhonnyJason/implicit-dom-connect/issues"
   },
-  "homepage": "https://",
+  "homepage": "https://github.com/JhonnyJason/implicit-dom-connect-output#readme",
   "dependencies": {
-    "chalk": "^2.4.2",
+    "camelcase": "^5.3.1",
+    "chalk": "^3.0.0",
     "clear": "0.1.0",
     "clui": "^0.3.6",
-    "figlet": "^1.2.4",
-    "inquirer": "^7.0.0",
-    "meow": "^5.0.0"
+    "figlet": "^1.3.0",
+    "glob": "^7.1.6",
+    "inquirer": "^7.0.6",
+    "meow": "^6.0.1"
   }
 }
