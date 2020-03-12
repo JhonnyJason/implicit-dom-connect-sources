@@ -40,12 +40,12 @@ pughandlermodule.initialize = () ->
 #region internal functions
 setUpSearchTree = ->
     search.reset()
-    search.addUnambiguousFindPattern("//-", onComment)
-    search.addUnambiguousFindPattern("include ", onInclude)
+    search.addExactMatchPattern("//-", onComment)
+    search.addExactMatchPattern("include ", onInclude)
 
-    search.addAmbiguousFindPattern("#", " ", onId)
-    search.addAmbiguousFindPattern("#", "(", onId)
-    search.addAmbiguousFindPattern("#", ".", onId)
+    search.addTokenMatchPattern("#", " ", onId)
+    search.addTokenMatchPattern("#", "(", onId)
+    search.addTokenMatchPattern("#", ".", onId)
 
     search.addIgnoreSequence("\"", "\"")
     search.addIgnoreSequence("'", "'")

@@ -10,7 +10,7 @@ debugmodule.modulesToDebug =
     # cliargumentsmodule: true
     # configmodule: true
     coffeehandlermodule: true
-    fastsearchtreemodule: true
+    # fastsearchtreemodule: true
     # mainprocessmodule: true
     # startupmodule: true
     # pathhandlermodule: true

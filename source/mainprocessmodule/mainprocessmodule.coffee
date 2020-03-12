@@ -10,10 +10,12 @@ print = (arg) -> console.log(arg)
 #endregion
 
 ############################################################
+#region localModules
 cfg = null
 pug = null
 path = null
 coffee = null
+#endregion
 
 ############################################################
 mainprocessmodule.initialize = () ->
@@ -32,7 +34,7 @@ mainprocessmodule.execute = (e) ->
     await path.prepareCoffeeCodePath(e.coffeeCode)
     # await path.prepareOutputPath(e.output)
 
-    await pug.readFiles()
+    # await pug.readFiles()
     await coffee.scanForUsedIds()
     # await coffee.writeOutputFile()
 
