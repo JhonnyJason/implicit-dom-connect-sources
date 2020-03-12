@@ -16,7 +16,6 @@ camelcase = require "camelcase"
 
 ############################################################
 path = null
-search = null
 
 #endregion
 
@@ -33,9 +32,47 @@ furtherFilePaths = []
 pughandlermodule.initialize = () ->
     log "pughandlermodule.initialize"
     path = allModules.pathhandlermodule
-    search = allModules.fastsearchtreemodule
     return
 
+############################################################
+#region internalFunctions
+processFile = (filePath) ->
+    log "processFile"
+    log filePath
+    foundIncludePaths = []
+    pugString = String(fs.readFileSync(filePath))
+    lines = pugString.split(/\r\n|\r|\n/)
+    for line in lines
+        line += " "
+        scanLine(line)
+    
+    log "after scanning... found stuff:"
+    olog foundIncludePaths
+    olog foundIds
+
+    base = path.dirname(filePath)
+    for includePath in foundIncludePaths
+        furtherFilePaths.push(path.resolve(base, includePath))
+    return        
+
+scanLine = (line) ->
+    log "scanLine"
+    commentIndex = line.indexOf("//-")
+    includeIndex = line.indexOf("include ")
+    idHashIndex = line.indexOf("#")
+    braceIndex = line.indexOf("(")
+
+    if commentIndex >= 0
+        if isComment(commentIndex, includeIndex, idHashIndex) then return
+    if includeIndex >= 0
+        if isInclude(commentIndex, includeIndex, idHashIndex)
+            rememberFile(line)
+            return
+    
+    if idHashIndex >= 0
+        if braceIndex != -1 and braceIndex < idHashIndex then return
+        rememberId(line, idHashIndex)
+    return
 
 ############################################################
 isComment = (commentIndex, includeIndex, idHashIndex) ->
@@ -54,6 +91,7 @@ isInclude = (commentIndex, includeIndex, idHashIndex) ->
         return true
     return false
 
+############################################################
 rememberFile = (line) ->
     log "rememberFile"
     tokens =  line.split(" ")
@@ -84,44 +122,7 @@ rememberId = (line, idHashIndex) ->
     foundIds.push(id)
     return
 
-scanLine = (line) ->
-    log "scanLine"
-    commentIndex = line.indexOf("//-")
-    includeIndex = line.indexOf("include ")
-    idHashIndex = line.indexOf("#")
-    braceIndex = line.indexOf("(")
-
-    if commentIndex >= 0
-        if isComment(commentIndex, includeIndex, idHashIndex) then return
-    if includeIndex >= 0
-        if isInclude(commentIndex, includeIndex, idHashIndex)
-            rememberFile(line)
-            return
-    
-    if idHashIndex >= 0
-        if braceIndex != -1 and braceIndex < idHashIndex then return
-        rememberId(line, idHashIndex)
-    return
-
-processFile = (filePath) ->
-    log "processFile"
-    log filePath
-    foundIncludePaths = []
-    pugString = String(fs.readFileSync(filePath))
-    lines = pugString.split(/\r\n|\r|\n/)
-    for line in lines
-        line += " "
-        scanLine(line)
-    
-    log "after scanning... found stuff:"
-    olog foundIncludePaths
-    olog foundIds
-
-    base = path.dirname(filePath)
-    for includePath in foundIncludePaths
-        furtherFilePaths.push(path.resolve(base, includePath))
-    return        
-
+#endregion
 
 ############################################################
 pughandlermodule.readFiles = () ->

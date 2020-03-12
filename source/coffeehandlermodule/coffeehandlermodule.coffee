@@ -10,74 +10,39 @@ print = (arg) -> console.log(arg)
 #endregion
 
 ############################################################
+fs = require "fs"
+
+############################################################
 pug = null
 path = null
-search = null
 
+############################################################
 allIds = null
 allFiles = null
+
+usedIds = []
 
 ############################################################
 coffeehandlermodule.initialize = () ->
     log "coffeehandlermodule.initialize"
     pug = allModules.pughandlermodule
     path = allModules.pathhandlermodule
-    search = allModules.fastsearchtreemodule
-    return
-
-setUpSearchTree = ->
-    log "setUpSearchTree"
-    # search.reset({find: "all"})
-
-    # search.addExactMatchPattern("/i", onTwoDifferentCharsMatch)
-    search.addExactMatchPattern("///", onThreeSameCharsMatch)
-    # search.addExactMatchPattern("//", onTwoSameCharsMatch)
-    # search.addExactMatchPattern("/", onOneCharMatch)
-    # search.addExactMatchPattern("/i", onSlashI)
-    # search.addExactMatchPattern("/as", onSlashAS)
-    # search.addExactMatchPattern("as", onAS)
-    # search.addTokenMatchPattern("#", " ", onId)
-    # search.addConsiderSequence("'''", "'''")
-    # search.addIgnoreSequence("\"", "\"")
-    return
-
-onOneCharMatch = (result, input, cursorPosition) ->
-    log "onOneChar"
-    print "cursorPosition:" + cursorPosition
-    print " - - - - - - - -  - - - - - -"
-    return
-
-onTwoDifferentCharsMatch = (result, input, cursorPosition) ->
-    log "onTwoDifferentCharsMatch"
-    print  "cursorPosition:" + cursorPosition
-    print " - - - - - - - -  - - - - - -"
-    return
-
-onTwoSameCharsMatch = (result, input, cursorPosition) ->
-    log "onTwoSameCharsMatch"
-    print "cursorPosition:" + cursorPosition
-    print " - - - - - - - -  - - - - - -"
-    return
-
-onThreeSameCharsMatch = (result, input, cursorPosition) ->
-    log "onTwoSameCharsMatch"
-    print "cursorPosition:" + cursorPosition
-    print " - - - - - - - -  - - - - - -"
     return
 
 ############################################################
 coffeehandlermodule.scanForUsedIds = ->
     log "coffeehandlermodule.scanForUserIds"
-    # allIds = pug.getAllIds()
-    # allFiles = path.coffeeCodeFilePaths
-    # olog allIds
-    # olog allFiles
-    coffeeString = """
-    ////
-    """ 
-    setUpSearchTree()
-    search.scan(coffeeString)
-    log "scan terminated!"
+    allIds = pug.getAllIds()
+    allFiles = path.coffeeCodeFilePaths
+    
+    for id in allIds
+        for file in allFiles
+            coffeeString = String(fs.readFileSync(file))
+            if coffeeString.indexOf(id) != -1
+                usedIds.push(id)
+                break
     return
+
+coffeehandlermodule.getUsedIds = -> usedIds
 
 module.exports = coffeehandlermodule
