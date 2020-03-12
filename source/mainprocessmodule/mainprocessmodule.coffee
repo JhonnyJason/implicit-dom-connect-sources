@@ -34,8 +34,8 @@ mainprocessmodule.execute = (e) ->
     await path.prepareCoffeeCodePath(e.coffeeCode)
     # await path.prepareOutputPath(e.output)
 
-    # await pug.readFiles()
-    await coffee.scanForUsedIds()
+    await pug.readFiles()
+    # await coffee.scanForUsedIds()
     # await coffee.writeOutputFile()
 
     return
