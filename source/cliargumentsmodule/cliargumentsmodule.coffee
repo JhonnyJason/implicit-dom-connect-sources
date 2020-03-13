@@ -38,6 +38,9 @@ getHelpText = ->
                     function.
                     The path may be relative or absolute.
 
+            optional:
+                --watch, -w
+                    flag that we should watch on file-change.
 
         TO NOTE:
             The flags will overwrite the flagless argument.
@@ -60,6 +63,9 @@ getOptions = ->
             output:
                 type: "string"
                 alias: "o"
+            watch:
+                type: "boolean"
+                alias: "w"
     }
 
 extractMeowed = (meowed) ->
@@ -69,6 +75,7 @@ extractMeowed = (meowed) ->
     pugHead = null
     coffeeCode = null
     output = null
+    watch = false
 
     ############################################################
     if meowed.input[0]
@@ -82,13 +89,14 @@ extractMeowed = (meowed) ->
     if meowed.flags.pugHead then pugHead = meowed.flags.pugHead
     if meowed.flags.coffeeCode then coffeeCode = meowed.flags.coffeeCode
     if meowed.flags.output then output = meowed.flags.output
+    if meowed.flags.watch then watch = meowed.flags.watch
 
     ############################################################
     if !pugHead then throw "Usage failure!"
     if !coffeeCode then throw "Usage failure!"
     if !output then throw "Usage failure!"
     
-    return {pugHead, coffeeCode, output}
+    return {pugHead, coffeeCode, output, watch}
 
 #endregion
 

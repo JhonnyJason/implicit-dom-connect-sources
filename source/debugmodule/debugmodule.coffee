@@ -9,7 +9,7 @@ debugmodule.modulesToDebug =
     unbreaker: true
     # cliargumentsmodule: true
     # configmodule: true
-    coffeehandlermodule: true
+    # coffeehandlermodule: true
     # fastsearchtreemodule: true
     # mainprocessmodule: true
     # startupmodule: true

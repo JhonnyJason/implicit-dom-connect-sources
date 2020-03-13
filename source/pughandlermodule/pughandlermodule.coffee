@@ -26,6 +26,8 @@ foundIds = []
 foundIncludePaths = []
 furtherFilePaths = []
 
+processedFiles = []
+
 #endregion
 
 ############################################################
@@ -39,20 +41,21 @@ pughandlermodule.initialize = () ->
 processFile = (filePath) ->
     log "processFile"
     log filePath
-    foundIncludePaths = []
+    foundIncludePaths.length = 0
     pugString = String(fs.readFileSync(filePath))
     lines = pugString.split(/\r\n|\r|\n/)
     for line in lines
         line += " "
         scanLine(line)
     
-    log "after scanning... found stuff:"
-    olog foundIncludePaths
-    olog foundIds
+    # log "after scanning... found stuff:"
+    # olog foundIncludePaths
+    # olog foundIds
 
     base = path.dirname(filePath)
     for includePath in foundIncludePaths
         furtherFilePaths.push(path.resolve(base, includePath))
+    processedFiles.push(filePath)    
     return        
 
 scanLine = (line) ->
@@ -127,6 +130,10 @@ rememberId = (line, idHashIndex) ->
 ############################################################
 pughandlermodule.readFiles = () ->
     log "pughandlermodule.readFiles"
+    processedFiles.length = 0
+    furtherFilePaths.length = 0
+    foundIds.length = 0
+
     processFile(path.pugHeadPath)
     while furtherFilePaths.length
         otherPath = furtherFilePaths.pop()
@@ -140,5 +147,8 @@ pughandlermodule.getAllIds = ->
         camelCased = camelcase(idString).replace(/#/g, "")
         if camelCased then result.push(camelCased)
     return result
+
+pughandlermodule.getProcessedFiles = -> processedFiles
+
 
 module.exports = pughandlermodule

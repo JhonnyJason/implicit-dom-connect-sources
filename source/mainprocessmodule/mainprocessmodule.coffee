@@ -18,6 +18,9 @@ coffee = null
 #endregion
 
 ############################################################
+args = null
+
+############################################################
 mainprocessmodule.initialize = () ->
     log "mainprocessmodule.initialize"
     cfg = allModules.configmodule
@@ -26,17 +29,51 @@ mainprocessmodule.initialize = () ->
     coffee = allModules.coffeehandlermodule
     return 
 
-############################################################
-mainprocessmodule.execute = (e) ->
-    log "mainprocessmodule.execute"    
+onChangeProcess = ->
+    log "onChangeProcess"
+    path.stopWatchingFiles()
+    await path.prepareCoffeeCodePath(args.coffeeCode)
+    await path.prepareOutputPath(args.output)
+    await process()
+    watchFiles()
+    return
 
-    await path.preparePugHeadPath(e.pugHead)
-    await path.prepareCoffeeCodePath(e.coffeeCode)
-    await path.prepareOutputPath(e.output)
+watchFiles = ->
+    log "watchFiles"
+    pugFiles = pug.getProcessedFiles()
+    path.onAnyFileChanges(pugFiles, onChangeProcess)
+    coffeeFiles = path.coffeeCodeFilePaths
+    path.onAnyFileChanges(coffeeFiles, onChangeProcess)
+    return
 
+eternalWatch = ->
+    log "eternalWatch"
+    watchFiles()
+    eternalPromise = new Promise (resolve, reject) -> 
+        resolveFunction = -> resolve("done")
+        neverCalledResolve = resolveFunction
+        return
+    return eternalPromise
+
+process = ->
+    log "process"
     await pug.readFiles()
     await coffee.scanForUsedIds()
     await coffee.writeOutputFile()
+    return
+
+############################################################
+mainprocessmodule.execute = (e) ->
+    log "mainprocessmodule.execute"    
+    args = e
+
+    await path.preparePugHeadPath(args.pugHead)
+    await path.prepareCoffeeCodePath(args.coffeeCode)
+    await path.prepareOutputPath(args.output)
+
+    await process()
+
+    if args.watch then answer = await eternalWatch()
 
     return
 

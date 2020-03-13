@@ -27,6 +27,7 @@ cfg = null
 ############################################################
 #region properties
 homedir = os.homedir()
+watcherList = []
 
 ############################################################
 #region exposedProperties
@@ -66,6 +67,19 @@ resolveHomeDir = (path) ->
         path = path.replace("~", homedir)
     return path
 
+onFileChange = (file, callback) ->
+    log "onFileChange"
+
+    directCallback = (eventType, filename) ->
+        if filename and eventType == "change"
+            log filename
+            callback()
+        return
+
+    watcher = fs.watch(file, directCallback)
+    watcherList.push(watcher)
+    return
+
 ############################################################
 checkSomethingExists = (something) ->
     try
@@ -89,6 +103,18 @@ checkFileExists = (path) ->
 
 ############################################################
 #region exposedFunctions
+pathhandlermodule.onAnyFileChanges = (files, callback) ->
+    log "pathhandlermodule.onAnyFileChanges"
+    for file in files
+        onFileChange(file, callback)
+    return
+
+pathhandlermodule.stopWatchingFiles =  ->
+    log "pathhandlermodule.stopWatchingFiles"
+    for watcher in watcherList
+        watcher.close()
+    watcherList.length = 0
+    return
 
 ############################################################
 #region preparationFunctions
@@ -109,7 +135,9 @@ pathhandlermodule.preparePugHeadPath = (providedPath) ->
     return
 
 pathhandlermodule.prepareCoffeeCodePath = (providedPath) ->
-    log "pathhandlermodule.prepareCoffeeCodePath"    
+    log "pathhandlermodule.prepareCoffeeCodePath"
+    pathhandlermodule.coffeeCodeFilePaths.length = 0
+
     if !providedPath then throw "prepareCoffeeCodePath - no providedPath"
     pathhandlermodule.coffeeCodePathExpression = providedPath
     providedPath = resolveHomeDir(providedPath)
@@ -131,6 +159,12 @@ pathhandlermodule.prepareOutputPath = (providedPath) ->
         pathhandlermodule.outputPath = providedPath
     else
         pathhandlermodule.outputPath = pathModule.resolve(process.cwd(), providedPath)
+
+    # remove self from coffee paths - also if it was there then it surely existed ;-)
+    for coffeePath,index in pathhandlermodule.coffeeCodeFilePaths
+        if coffeePath ==  pathhandlermodule.outputPath
+            pathhandlermodule.coffeeCodeFilePaths.splice(index, 1)
+            return
 
     lastDir = pathModule.dirname(pathhandlermodule.outputPath)
     exists = await checkDirectoryExists(lastDir)

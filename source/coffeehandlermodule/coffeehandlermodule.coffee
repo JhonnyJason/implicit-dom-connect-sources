@@ -44,12 +44,20 @@ generateContentObject = ->
         content.usedIds.push(node)
     return content
 
+writeIfDifferent = (filePath, content)->
+    log "writeIfDifferent"
+    try oldContent = String(fs.readFileSync(filePath))
+    catch err then oldContent = ""
+    if oldContent != content then fs.writeFileSync(filePath, content)
+    return
+
 ############################################################
 coffeehandlermodule.scanForUsedIds = ->
     log "coffeehandlermodule.scanForUserIds"
     allIds = pug.getAllIds()
     allFiles = path.coffeeCodeFilePaths
-    
+    usedIds.length = 0
+
     for id in allIds
         for file in allFiles
             coffeeString = String(fs.readFileSync(file))
@@ -65,7 +73,7 @@ coffeehandlermodule.writeOutputFile = ->
     template = String(fs.readFileSync(path.templatePath))        
     contentObject = generateContentObject()
     fileContent = mustache.render(template, contentObject)
-    fs.writeFileSync(path.outputPath, fileContent)
+    writeIfDifferent(path.outputPath, fileContent)
     return
 
 module.exports = coffeehandlermodule

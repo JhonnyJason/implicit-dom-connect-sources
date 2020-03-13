@@ -60,6 +60,10 @@ Options
             function.
             The path may be relative or absolute.
 
+    optional:
+        --watch, -w
+            flag that we should watch on file-change.
+
 
 TO NOTE:
     The flags will overwrite the flagless argument.
@@ -114,6 +118,7 @@ module.exports = Result
 ```
 
 # Further steps
+- Only react on actual fileChanges
 - More efficient textsearch algorithm -> fasttreesearch ;-)
 - More sophisticated token specification to reduce unnecessarily injected elements^^
 - Add capability to inject EventListeners directly to other modules
