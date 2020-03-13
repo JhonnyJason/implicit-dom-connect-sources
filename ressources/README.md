@@ -1,29 +1,122 @@
-# noname - 
+# implicit-dom-connect - a small tool to identify usage of elements in .pug files inside .coffee files to then be implicitly availabe 
 
 # Why?
+Not using a weird things like angular,react,vue and the like I have witnessed to type very often:
+
+    - idOfElement = document.getElementById("id-of-element)
+    - idOfElement.addEventListener("click", idOfElementOnClick)
+    - idOfElementOnClick = -> idOfElement.classList.add("active")
+
+while I could type instead
+
+    - idOfElementOnClick = -> idOfElement.classList.add("active")
+
+The connection to the DOM is implicitely and unambigously defined already when we have respect an implicit semantic meaning to our variable which reflects what it really is.
 
 # What?
 
+A small CLI helper tool.
+It reads through the .pug to retrieve everything which is an id.
+Then it reads through the .coffee files to figure out if the camelCased id is used as a variable somewhere. There it remembers the ones which are being used.
+
+Last it writes to the specified output file. Where all the variables are injected into the global Scope on initialize.
+
 # How?
-Requirements
-------------
 
 Installation
 ------------
 
+Current git version
+``` sh
+$ npm install git+https://github.com/JhonnyJason/implicit-dom-connect.git
+```
+Npm Registry
+``` sh
+$ npm install implicit-dom-connect
+```
 
 Usage
 -----
 
+```
+Usage
+    $ implicit-dom-connect <arg1> <arg2> <arg3>
 
-Current Functionality
----------------------
+Options
+    required: 
+        arg1, --pug-head <pugHead>, -p <pugHead>
+            path of where we may find the pug head for the document.
+            The path may be relative or absolute.
+            
+        arg2, --coffee-code <coffeeCode>, -c <coffeeCode>
+            single path or glob expression of where we may find the
+            coffeescript files which are potentially using the
+            ids of the document.
+            The path may be relative or absolute.
+
+        arg3, --output <output>, -o <output>
+            path of the output file. This will be a coffee script
+            module doing it's connection part on an initialize 
+            function.
+            The path may be relative or absolute.
 
 
----
+TO NOTE:
+    The flags will overwrite the flagless argument.
+
+Examples
+    $ implicit-dom-connect pug-heads/document-head.pug ./*/*.coffee ./domconnect/domconnect.coffee 
+    ...
+```
+
+Example
+-----
+The Pug
+```pug
+include otherFile
+//- #NoId
+#super-id-element.special-super(superness="over9000")
+
+
+```
+The otherFile
+```pug
+.crappy-class(background="#fff")
+    #awesome-id-element
+```
+
+The Coffee
+```coffeescript
+superness = superIdElement.getAttribute("superness")
+console.log("superIdElements' superness is:" + superness)
+awesomeIdElement.setAttribute("superness", superness)
+
+```
+
+The Call
+```sh
+$ implicit-dom-connect Pug Coffee Result
+```
+
+The Result
+```coffeescript
+Result = {name: "Result"}
+
+############################################################
+Result.initialize = () ->
+    global.awesomeIdElement = document.getElementById("awesome-id-element")
+    global.superIdElement = document.getElementById("super-id-element")
+    console.log("-> used Elements available in their global variable!")
+    return
+    
+module.exports = Result
+
+```
 
 # Further steps
-
+- More efficient textsearch algorithm -> fasttreesearch ;-)
+- More sophisticated token specification to reduce unnecessarily injected elements^^
+- Add capability to inject EventListeners directly to other modules
 - ...
 
 

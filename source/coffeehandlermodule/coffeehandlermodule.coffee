@@ -11,6 +11,8 @@ print = (arg) -> console.log(arg)
 
 ############################################################
 fs = require "fs"
+mustache = require "mustache"
+decamelize = require "decamelize"
 
 ############################################################
 pug = null
@@ -30,6 +32,19 @@ coffeehandlermodule.initialize = () ->
     return
 
 ############################################################
+generateContentObject = ->
+    log "generateContentObject"
+    moduleName = path.basename(path.outputPath, ".coffee")
+    content = {moduleName}
+    content.usedIds = []
+    for id in usedIds
+        node =
+            variable: id
+            documentId: decamelize(id, "-")
+        content.usedIds.push(node)
+    return content
+
+############################################################
 coffeehandlermodule.scanForUsedIds = ->
     log "coffeehandlermodule.scanForUserIds"
     allIds = pug.getAllIds()
@@ -44,5 +59,13 @@ coffeehandlermodule.scanForUsedIds = ->
     return
 
 coffeehandlermodule.getUsedIds = -> usedIds
+
+coffeehandlermodule.writeOutputFile = ->
+    log "coffeehandlermodule.writeOutputFile"
+    template = String(fs.readFileSync(path.templatePath))        
+    contentObject = generateContentObject()
+    fileContent = mustache.render(template, contentObject)
+    fs.writeFileSync(path.outputPath, fileContent)
+    return
 
 module.exports = coffeehandlermodule
