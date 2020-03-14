@@ -55,6 +55,10 @@ processFile = (filePath) ->
     base = path.dirname(filePath)
     for includePath in foundIncludePaths
         furtherFilePaths.push(path.resolve(base, includePath))
+    
+    log "foundIncludePaths"
+    olog foundIncludePaths
+
     processedFiles.push(filePath)    
     return        
 
@@ -100,8 +104,9 @@ rememberFile = (line) ->
     tokens =  line.split(" ")
     for token,i in tokens
         if token == "include"
-            foundIncludePaths.push(tokens[i+1])
-            return
+            if tokens[i+1].lastIndexOf(".pug") == (tokens[i+1].length - 4)
+                foundIncludePaths.push(tokens[i+1])
+                return
     return
 
 rememberId = (line, idHashIndex) ->
@@ -122,7 +127,7 @@ rememberId = (line, idHashIndex) ->
     if spaceIndex < bestGuessEnd then bestGuessEnd = braceIndex
 
     id = line.slice(idHashIndex, bestGuessEnd)
-    foundIds.push(id)
+    if !foundIds.includes("") then foundIds.push(id)
     return
 
 #endregion
@@ -138,6 +143,8 @@ pughandlermodule.readFiles = () ->
     while furtherFilePaths.length
         otherPath = furtherFilePaths.pop()
         processFile(otherPath)
+    log "read all files"
+    olog foundIds
     return
 
 pughandlermodule.getAllIds = ->

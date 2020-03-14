@@ -1,6 +1,6 @@
 {
   "name": "implicit-dom-connect",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A small helper toot - reading pug files to retrieve defined IDs then checks if they used in coffeescript. If they are used, the connection to the DOM is implicitly established - creating a file to be explicitly included in the build-process.",
   "main": "index.js",
   "scripts": {

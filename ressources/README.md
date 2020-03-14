@@ -3,13 +3,13 @@
 # Why?
 Not using a weird things like angular,react,vue and the like I have witnessed to type very often:
 
-    - idOfElement = document.getElementById("id-of-element)
-    - idOfElement.addEventListener("click", idOfElementOnClick)
-    - idOfElementOnClick = -> idOfElement.classList.add("active")
+- idOfElement = document.getElementById("id-of-element)
+- idOfElement.addEventListener("click", idOfElementOnClick)
+- idOfElementOnClick = -> idOfElement.classList.add("active")
 
 while I could type instead
 
-    - idOfElementOnClick = -> idOfElement.classList.add("active")
+- idOfElementOnClick = -> idOfElement.classList.add("active")
 
 The connection to the DOM is implicitely and unambigously defined already when we have respect an implicit semantic meaning to our variable which reflects what it really is.
 
@@ -20,6 +20,9 @@ It reads through the .pug to retrieve everything which is an id.
 Then it reads through the .coffee files to figure out if the camelCased id is used as a variable somewhere. There it remembers the ones which are being used.
 
 Last it writes to the specified output file. Where all the variables are injected into the global Scope on initialize.
+
+- id is what starts with # and ends with ' ', '(', '.' or '\n'
+- as variable is recognized camalCased id followed by '.'
 
 # How?
 
@@ -120,7 +123,6 @@ module.exports = Result
 # Further steps
 - Only react on actual fileChanges
 - More efficient textsearch algorithm -> fasttreesearch ;-)
-- More sophisticated token specification to reduce unnecessarily injected elements^^
 - Add capability to inject EventListeners directly to other modules
 - ...
 

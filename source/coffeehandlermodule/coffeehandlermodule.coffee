@@ -53,7 +53,7 @@ writeIfDifferent = (filePath, content)->
 
 ############################################################
 coffeehandlermodule.scanForUsedIds = ->
-    log "coffeehandlermodule.scanForUserIds"
+    log "coffeehandlermodule.scanForUsedIds"
     allIds = pug.getAllIds()
     allFiles = path.coffeeCodeFilePaths
     usedIds.length = 0
@@ -61,9 +61,12 @@ coffeehandlermodule.scanForUsedIds = ->
     for id in allIds
         for file in allFiles
             coffeeString = String(fs.readFileSync(file))
-            if coffeeString.indexOf(id) != -1
+            if coffeeString.indexOf(id + ".") != -1
                 usedIds.push(id)
                 break
+    
+    log "scanned usedIds"
+    olog usedIds
     return
 
 coffeehandlermodule.getUsedIds = -> usedIds
