@@ -113,7 +113,6 @@ Result = {name: "Result"}
 Result.initialize = () ->
     global.awesomeIdElement = document.getElementById("awesome-id-element")
     global.superIdElement = document.getElementById("super-id-element")
-    console.log("-> used Elements available in their global variable!")
     return
     
 module.exports = Result
